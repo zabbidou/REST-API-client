@@ -1,0 +1,45 @@
+--------------------------------------------------------------------------------
+| Gherman Maria Irina  ____  ____  _  _   __     ____           324 CB         |
+|                     (_  _)(  __)( \/ ) / _\   (___ \                         |
+|                       )(   ) _) / \/ \/    \   (__ (                         |
+|                      (__) (____)\_)(_/\_/\_/  (____/                         |
+|                                                                              |
+--------------------------------------------------------------------------------
+
+    A fost ok tema asta tbh, mergea mai faina (aka MITM sau ceva exploits), dar
+macar a fost un exercitiu bun de modularizare a codului.
+
+    As usual, ca in orice readme, o sa explic pe rand ce face fiecare functie,
+ca sunt saraca in comentarii in cod. Pentru ca ideea generala sincer e la fel, 
+o sa zic doar cateva idei si trec la explicat: sincer am luat tot lab-ul de
+http si am improvizat peste el, deci helpers, requests si buffer (.cpp/.h) sunt
+cam la fel ca in lab.
+    Am tinut error checking-ul la minim. Normal, daca faceam o aplicatie fara
+sa cunosc server-ul, faceam eu personal error checking. In schimb, stiind ca
+serverul de la tema ne returneaza mesaj de eroare pentru aproape... orice,
+singurul check pe care l-am facut a fost sa nu dai login cand esti deja logat
+pe un utilizator (pentru a preveni 2 login-uri and shits).
+
+    1. am helpere multe. le-as fi mutat in helpers.cpp dar *sincer* mi-era lene.
+Helperii sunt: dns_lookup, is_error, is_number, get_login_info, get_id, 
+get_book_info, extract_JWT, book_addr, print_error, print_json. Toate fac ce le
+spune numele SAU codul e atat de usor incat se intelege fara explicatii. pls
+spare me from this. Singura care merita o mentiune speciala e book_addr, care
+compune prin magiile C++-ului URL-ul la care trebuie dat request-ul, primind
+id-ul cartii.
+
+    2. pe langa helpere, sincer, toate functiile sunt straight forward.
+Apeleaza helpere pentru a lua / printa informatia si apeleaza compute_X_request.
+De mentionat este formatul functiilor (toate sunt aproape la fel, le-am cam dat
+copy paste intre ele): Prima oara dau open_server_connection (care e un wrapper
+peste open_connection cu toti parametrii lui), ca sa fiu sigura ca nu o sa
+primesc timed out niciodata, iau ce informatii am nevoie (de la stdin, cu
+helperele), dau compute_X_requestt, o trimit, afisez raspunsul brut, afisez
+raspunsul frumos (adica eroare SAU json-ul primit), extrag ce date am nevoie
+(daca am nevoie, adica JWT sau cookie) si dau close connection (daca tot o
+deschid de fiecare data, might as well close it).
+
+    Mentionez de altfel ca am aproape toate variabilele globale, pentru ca
+clientul meu este stateful, sa ii zicem asa, si am preferat in loc sa dau 500 de
+chestii ca parametru, sa le declar globale pe toate si aia e. Eu am grija de ele
+ce stochez si cand le resetez.
